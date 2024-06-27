@@ -15,6 +15,18 @@
 
 import json
 
+from models.sqlite3_connection import SQLite3Connection
+from models.table import SQLTable
+from tasks.sqlite.get_table_schema import get_table_schema
+from tasks.sqlite.get_table_content import get_table_content
 
-def process_json_request(json: str) -> None:
-    print(json)
+
+def process_json_request(req: str) -> None:
+    request = json.loads(req)
+
+    if request['connection']['type'] == 'sqlite3':
+        connection = SQLite3Connection(request['connection'])
+
+        if request['request'] == 'query':
+           results = get_table_content(connection, SQLTable(request['data']))
+           print(json.dumps(results))
