@@ -14,10 +14,12 @@
 # along with this program.  If not, see <http:/www.gnu.org/licenses/>.
 
 import json
+import os
 
+from filesystem.format_lines import format_lines
+from filesystem.save_to_temp import create_temp_folder
 from models.sqlite3_connection import SQLite3Connection
 from models.table import SQLTable
-from tasks.sqlite.get_table_schema import get_table_schema
 from tasks.sqlite.get_table_content import get_table_content
 
 
@@ -26,7 +28,13 @@ def process_json_request(req: str) -> None:
 
     if request['connection']['type'] == 'sqlite3':
         connection = SQLite3Connection(request['connection'])
+        temp = create_temp_folder(connection)
 
         if request['request'] == 'query':
-           results = get_table_content(connection, SQLTable(request['data']))
-           print(json.dumps(results))
+            results = get_table_content(connection, SQLTable(request['data']))
+            lines = format_lines(list(map(lambda l: '|'.join(list(map(lambda e: 'NULL' if e == None else str(e), l))), results)))
+            file_path = os.path.join(temp, SQLTable(request['data']).table_name + '.database-table')
+            with open(file_path, 'w') as f:
+                f.write('\n'.join(lines))
+
+            print(json.dumps({'result' : file_path}))
