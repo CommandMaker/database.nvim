@@ -42,3 +42,6 @@ def delete_temp_folder(connection: SQLite3Connection) -> None:
     if os.path.exists(path):
         shutil.rmtree(path)
 
+
+def get_temp_path() -> str:
+    return os.path.join(tempfile.gettempdir(), 'database.nvim')

@@ -13,7 +13,6 @@
 # you should have received a copy of the gnu general public license
 # along with this program.  if not, see <http:/www.gnu.org/licenses/>.
 
-import json
 from typing import Any
 
 class SQLite3ColumnSchema:
@@ -25,7 +24,7 @@ class SQLite3ColumnSchema:
     pk: int
 
     def __init__(self, column_schema: list) -> None:
-        self.cid = int(column_schema[0])
+        self.cid = int(column_schema[0]) if type(column_schema[0]) == int else column_schema[0]
         self.name = column_schema[1]
         self.type = column_schema[2]
         self.notnull = bool(int(column_schema[3]))

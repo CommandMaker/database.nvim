@@ -16,3 +16,5 @@
 require('database.buffer.reindent_edit_buffer')
 
 require('database.commands.open_table').register_command()
+require('database.commands.select_connection').register_command()
+require('database.commands.close_connection').register_command()

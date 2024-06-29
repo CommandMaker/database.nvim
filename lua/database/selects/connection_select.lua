@@ -13,32 +13,24 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http:/www.gnu.org/licenses/>.
 
+local connection_select = {}
+
 local json = require('database.utils.json')
 local fs   = require('database.utils.fs')
 
-local open_table = {}
-
-function open_table.open_table(table_name)
+function connection_select.connection_select(callback)
     local req = {
-        connection = {
-            type = 'sqlite3',
-            path = '/Users/command_maker/Lab/gestion-mdl/server/database.db'
-        },
-        request = 'query',
-        data = {
-            table_name = table_name,
-            columns = {'*'}
-        }
+        request = 'connection_list'
     }
 
-    local table_file = io.popen(fs.get_backend_command(req))
-    vim.cmd('e ' .. json.decode(table_file:read('*a'))['result'])
+    local available_connections = json.decode(io.popen(fs.get_backend_command(req)):read('*a'))
+
+    vim.ui.select(available_connections, {
+        prompt = 'Select a connection',
+        format_item = function (item)
+            return item['name']
+        end
+    }, callback)
 end
 
-function open_table.register_command()
-    vim.api.nvim_create_user_command('DatabaseTable', function ()
-        open_table.open_table('users')
-    end, {})
-end
-
-return open_table
+return connection_select

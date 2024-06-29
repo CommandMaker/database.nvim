@@ -13,32 +13,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http:/www.gnu.org/licenses/>.
 
+local fs = {}
+
 local json = require('database.utils.json')
-local fs   = require('database.utils.fs')
 
-local open_table = {}
-
-function open_table.open_table(table_name)
-    local req = {
-        connection = {
-            type = 'sqlite3',
-            path = '/Users/command_maker/Lab/gestion-mdl/server/database.db'
-        },
-        request = 'query',
-        data = {
-            table_name = table_name,
-            columns = {'*'}
-        }
-    }
-
-    local table_file = io.popen(fs.get_backend_command(req))
-    vim.cmd('e ' .. json.decode(table_file:read('*a'))['result'])
+function fs.get_script_path()
+    local str = debug.getinfo(2, 'S').source:sub(2)
+    return str:match('(.*' .. '/' .. ')')
 end
 
-function open_table.register_command()
-    vim.api.nvim_create_user_command('DatabaseTable', function ()
-        open_table.open_table('users')
-    end, {})
+function fs.get_backend_command(request_object)
+    return 'python ' .. fs.get_script_path() .. '../../../python/main.py ' .. "'" .. json.encode(request_object) .. "'"
 end
 
-return open_table
+return fs
