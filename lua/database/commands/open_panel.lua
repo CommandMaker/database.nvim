@@ -13,9 +13,19 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <http:/www.gnu.org/licenses/>.
 
-require('database.buffer.reindent_edit_buffer')
+local open_panel = {}
 
-require('database.commands.open_table').register_command()
-require('database.commands.select_connection').register_command()
-require('database.commands.close_connection').register_command()
-require('database.commands.open_panel').register_command()
+local create_buffer = require('database.buffer.create_buffer')
+
+
+function open_panel.open_panel()
+    create_buffer.create_buffer()
+end
+
+function open_panel.register_command()
+    vim.api.nvim_create_user_command('DatabasePanel', function ()
+        open_panel.open_panel()
+    end, {})
+end
+
+return open_panel

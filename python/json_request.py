@@ -54,8 +54,7 @@ def process_json_request(req: str) -> None:
 
     if type(request['request']) == dict and request['request']['type'] == 'query':
         connection = json.loads(open(os.path.join(get_temp_path(), 'opened_connection.json')).read())
-        print(connection)
-        print(json.dumps(query_controller.handle_request(SQLite3Connection(connection), request['request'])))
+        print(json.dumps(query_controller.handle_request(SQLite3Connection(connection), request['request'])), end='')
 
     if type(request['request']) == str and request['request'].startswith('connection_'):
         print(json.dumps(connection_controller.handle_request(request['request'], request['data'] if request.__contains__('data') else {})))
