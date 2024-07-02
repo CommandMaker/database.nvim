@@ -13,7 +13,6 @@
 # you should have received a copy of the gnu general public license
 # along with this program.  if not, see <http:/www.gnu.org/licenses/>.
 
-import json
 from models.sqlite3_connection import SQLite3Connection
 from models.table import SQLTable
 from .get_table_schema import get_table_schema
