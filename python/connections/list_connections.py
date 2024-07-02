@@ -35,7 +35,7 @@ def get_plugin_directory() -> str:
     return os.path.join(os.path.expanduser('~'), '.local', 'share', 'nvim', 'database.nvim') 
 
 
-def list_connections() -> list|dict:
+def list_connections() -> list:
     plugin_dir = get_plugin_directory()
 
     if not os.path.exists(plugin_dir):

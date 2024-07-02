@@ -16,18 +16,26 @@
 local select_connection = {}
 
 local connection_select = require('database.selects.connection_select')
-local fs                = require('database.utils.fs')
+local fs = require('database.utils.fs')
+local add_connection = require('database.selects.add_connection')
 
 function select_connection.select_connection()
     connection_select.connection_select(function (choice)
-        local req = {
-            request = 'connection_open',
-            data = {
-                connection = choice
-            }
-        }
+        if choice ~= nil then
+            if choice['name'] == '[Add new]' then
+                add_connection.add_connection_picker()
+                return
+            end
 
-        io.popen(fs.get_backend_command(req))
+            local req = {
+                request = 'connection_open',
+                data = {
+                    connection = choice
+                }
+            }
+
+            io.popen(fs.get_backend_command(req))
+        end
     end)
 end
 

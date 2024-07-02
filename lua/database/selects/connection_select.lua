@@ -16,7 +16,7 @@
 local connection_select = {}
 
 local json = require('database.utils.json')
-local fs   = require('database.utils.fs')
+local fs = require('database.utils.fs')
 
 function connection_select.connection_select(callback)
     local req = {
@@ -24,13 +24,34 @@ function connection_select.connection_select(callback)
     }
 
     local available_connections = json.decode(io.popen(fs.get_backend_command(req)):read('*a'))
+    table.insert(available_connections, 1, {name = '[Add new]'})
 
     vim.ui.select(available_connections, {
         prompt = 'Select a connection',
         format_item = function (item)
             return item['name']
         end
-    }, callback)
+    }, function (choice)
+        if choice ~= nil then
+            if choice['name'] == '[Add new]' then
+                callback(choice)
+                return
+            end
+
+            local options = {'Connect', 'Delete'}
+            vim.ui.select(options, {
+                prompt = 'What do you want to do ?',
+            }, function (todo)
+                if todo ~= nil then
+                    if todo == 'Connect' then
+                        callback(choice)
+                    else
+                        io.popen(fs.get_backend_command({request = 'connection_delete', data = { connection = choice }}))
+                    end
+                end
+            end)
+        end
+    end)
 end
 
 return connection_select

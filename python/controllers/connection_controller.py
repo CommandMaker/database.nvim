@@ -16,6 +16,8 @@
 from connections.list_connections import list_connections
 from connections.open_connection import open_connection
 from connections.close_connection import close_connection
+from connections.save_connection import save_connection
+from connections.delete_connection import delete_connection
 
 
 def handle_request(request: str, data: dict = {}) -> dict|list:
@@ -25,5 +27,9 @@ def handle_request(request: str, data: dict = {}) -> dict|list:
         open_connection(data['connection'])
     elif request == 'connection_close':
         close_connection()
+    elif request == 'connection_save':
+        save_connection(data)
+    elif request == 'connection_delete':
+        delete_connection(data['connection'])
 
     return []
